@@ -1,13 +1,15 @@
 import {View, Text} from 'react-native';
 import React from 'react';
-
+import CustomButtont from '../../coponents/CustomButton/CustomButton';
+import {useNavigation} from '@react-navigation/native';
 const LogoutScreen = () => {
+  const navigation = useNavigation();
+  const onSignOutPress = () => {
+    navigation.navigate('SingIn');
+  };
   return (
     <View>
-      <Text
-        style={{fontSize: 20, textAlign: 'center', justifyContent: 'center'}}>
-        this is Logout Screen
-      </Text>
+      <CustomButtont text="Sign out" onPress={onSignOutPress} />
     </View>
   );
 };

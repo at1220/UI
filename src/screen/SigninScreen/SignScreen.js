@@ -7,44 +7,68 @@ import {
   ScrollView,
 } from 'react-native';
 import React, {useState} from 'react';
-import Logo from '../../../assets/images/logo.png';
 import CustomInput from '../../coponents/CustomInput/CustomInput';
 import CustomButtont from '../../coponents/CustomButton/CustomButton';
 import {useNavigation} from '@react-navigation/native';
+import axiosService from '../../module/axiosService';
 const SiginScreen = () => {
   const {height} = useWindowDimensions();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
 
   const navigation = useNavigation();
 
-  const onSiginPress = () => {
-    navigation.navigate('Home');
+  const onSiginPress = async () => {
+    console.log(username, password);
+    if (username != '') {
+      if (password != '') {
+        const result = await axiosService
+          .post('http://localhost:8080/api/login/', {
+            username: username,
+            password: password,
+          })
+          .then(res => {
+            console.log(res);
+            navigation.navigate('Home');
+          })
+          .catch(
+            alert('username or password invalid'),
+            navigation.navigate('SingIn'),
+          );
+      } else {
+        alert('password not empty');
+      }
+    } else {
+      alert('username not empty! ');
+    }
+    // validate username
+    //validate passwork
+    //axiosService.get(URL,body)
+    //navigation.navigate('Home');
   };
   const onRedataPress = () => {
     navigation.navigate('Redata');
   };
   return (
-    <View style={styles.root}>
-      <Image
-        source={Logo}
-        style={[styles.logo, {height: height * 0.3}]}
-        resizeMode="contain"
-      />
-      <CustomInput
-        placeholder="Username"
-        value={username}
-        onChangeText={setUsername}
-      />
-      <CustomInput
-        placeholder="Pasword"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry={true}
-      />
-      <CustomButtont text="Sign In" onPress={onSiginPress} />
-      <CustomButtont text="Restore Data" onPress={onRedataPress} />
-    </View>
+    <ScrollView>
+      <View style={styles.root}>
+        <Text style={styles.logo}>Login</Text>
+        <CustomInput
+          placeholder="Username"
+          value={username}
+          setValue={setUsername}
+        />
+        <CustomInput
+          placeholder="Pasword"
+          value={password}
+          setValue={setPassword}
+          secureTextEntry={true}
+        />
+        <CustomButtont text="Sign In" onPress={onSiginPress} />
+        <CustomButtont text="Restore Data" onPress={onRedataPress} />
+      </View>
+    </ScrollView>
   );
 };
 const styles = StyleSheet.create({
@@ -53,9 +77,7 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   logo: {
-    width: '70%',
-    maxWidth: 300,
-    maxHeight: 200,
+    fontSize: 50,
   },
 });
 export default SiginScreen;
